@@ -1,11 +1,11 @@
-name: Windows2spec
+name: test cpu ram
 
 on: 
   workflow_dispatch:
     inputs:
       ngrok:
         description: 'ngrok auth token'
-        required: true
+        required: false
  
 jobs:
   build:
