@@ -19,3 +19,4 @@ jobs:
           lscpu
           free -m
           lsblk
+          ls /mnt
