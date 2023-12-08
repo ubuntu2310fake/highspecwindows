@@ -1,0 +1,21 @@
+name: Windows2spec
+
+on: 
+  workflow_dispatch:
+    inputs:
+      ngrok:
+        description: 'ngrok auth token'
+        required: true
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test cpu ram neofetch
+        run: |
+          sudo apt update -y
+          sudo apt install neofetch -y
+          neofetch
+          lscpu
+          free -m
+          lsblk
