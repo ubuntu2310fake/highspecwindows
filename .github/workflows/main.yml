@@ -23,7 +23,7 @@ jobs:
       - name: cài win và khởi chạy
         run: |
           sudo chmod 666 /dev/kvm
-          sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
+          sudo qemu-img create -f qcow2 a.qcow2 40G
           wget -O win11.iso https://computernewb.com/isos/windows/Win10_22H2_English_x64.iso
           wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
-          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host,+avx -smp sockets=1,cores=2,threads=2 -m 12G -device virtio-balloon-pci -device qxl-vga,vgamem_mb=1024 -device virtio-net-pci,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=win11.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
+          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host,+avx -smp sockets=1,cores=2,threads=2 -m 12G -device virtio-balloon-pci -device qxl-vga,vgamem_mb=1024 -device virtio-net-pci,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=a.qcow2 -drive file=win11.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
