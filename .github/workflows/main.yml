@@ -26,4 +26,4 @@ jobs:
           sudo qemu-img create -f qcow2 a.qcow2 40G
           wget -O win11.iso https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
           wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
-          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host,+avx -smp sockets=1,cores=2,threads=2 -m 10G -device virtio-balloon-pci -device qxl-vga,vgamem_mb=1024 -device virtio-net-pci,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=a.qcow2 -drive file=win11.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
+          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp sockets=1,cores=4,threads=4 -m 10G -device virtio-balloon-pci -device qxl-vga,vgamem_mb=1024 -device virtio-net-pci,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=a.qcow2 -drive file=win11.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
