@@ -1,0 +1,33 @@
+name: Windows / Linux KVM support high spec qcow2 download (12gb ram / 60gb ssd / 3core / VT-x support)
+
+on: 
+  workflow_dispatch:
+    inputs:
+      ngrok:
+        description: 'ngrok auth token'
+        required: true
+      link_qcow2:
+        description: 'dán link ổ cứng qcow2 vào đây'
+        required: true
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: chuẩn bị phần mềm
+        run: |
+          sudo apt update -y
+          sudo apt install curl wget qemu-kvm -y
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+          tar -xf ngrok-v3-stable-linux-amd64.tgz
+          chmod +x ngrok
+          ./ngrok config add-authtoken "${{ github.event.inputs.ngrok }}"
+          nohup ./ngrok tcp --region ap 5900 &>/dev/null &
+      - name: cài win và khởi chạy
+        run: |
+          sudo chmod 666 /dev/kvm
+          sudo wget -O /mnt/a.qcow2 "${{ github.event.inputs.link_qcow2 }}"
+          wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
+          echo "bình thường sẽ được 20 - 30 phút nhé còn ae nào may mắn đc 2-4h"
+          sudo nohup qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd &>/dev/null &
+          sleep 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
