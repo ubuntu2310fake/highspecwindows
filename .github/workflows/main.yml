@@ -1,4 +1,4 @@
-name: Windows2spec
+name: Windows / Linux KVM support high spec (12gb ram / 60gb ssd / 3core / VT-x support)
 
 on: 
   workflow_dispatch:
@@ -6,10 +6,13 @@ on:
       ngrok:
         description: 'ngrok auth token'
         required: true
+      link_iso:
+        description: 'dán link iso của ae vô đây'
+        required: true
  
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: chuẩn bị phần mềm
         run: |
@@ -23,7 +26,9 @@ jobs:
       - name: cài win và khởi chạy
         run: |
           sudo chmod 666 /dev/kvm
-          sudo qemu-img create -f qcow2 a.qcow2 40G
-          wget -O win11.iso https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
+          sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
+          wget -O file.iso "${{ github.event.inputs.link_iso }}"
           wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
-          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp sockets=1,cores=4,threads=4 -m 10G -device virtio-balloon-pci -device qxl-vga,vgamem_mb=1024 -device virtio-net-pci,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=a.qcow2 -drive file=win11.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
+          echo "bình thường sẽ được 20 - 30 phút nhé còn ae nào may mắn đc 2-4h"
+          sudo nohup qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd &>/dev/null &
+          sleep 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
