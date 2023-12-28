@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       ngrok:
-        description: 'ngrok auth token'
+        description: 'NGROK auth token'
         required: true
       link_iso:
-        description: 'dán link iso của ae vô đây'
+        description: 'Link to your .iso file'
         required: true
  
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: chuẩn bị phần mềm
+      - name: Setup NGROK
         run: |
           sudo apt update -y
           sudo apt install curl wget qemu-kvm -y
@@ -22,13 +22,12 @@ jobs:
           tar -xf ngrok-v3-stable-linux-amd64.tgz
           chmod +x ngrok
           ./ngrok config add-authtoken "${{ github.event.inputs.ngrok }}"
-          nohup ./ngrok tcp --region ap 5900 &>/dev/null &
-      - name: cài win và khởi chạy
+          nohup ./ngrok tcp --region us 5900 &>/dev/null &
+      - name: Download ISO and run QEMU process
         run: |
           sudo chmod 666 /dev/kvm
           sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
           wget -O file.iso "${{ github.event.inputs.link_iso }}"
           wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
-          echo "bình thường sẽ được 20 - 30 phút nhé còn ae nào may mắn đc 2-4h"
           sudo nohup qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd &>/dev/null &
           sleep 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
