@@ -30,5 +30,4 @@ jobs:
           wget -O file.iso "${{ github.event.inputs.link_iso }}"
           wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
           echo "bình thường sẽ được 20 - 30 phút nhé còn ae nào may mắn đc 2-4h"
-          sudo nohup qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd &>/dev/null &
-          sleep 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
