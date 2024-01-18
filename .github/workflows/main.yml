@@ -17,7 +17,7 @@ jobs:
       - name: chuẩn bị phần mềm
         run: |
           sudo apt update -y
-          sudo apt install curl wget qemu-kvm -y
+          sudo apt install curl wget qemu-kvm cpulimit -y
           wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
           tar -xf ngrok-v3-stable-linux-amd64.tgz
           chmod +x ngrok
