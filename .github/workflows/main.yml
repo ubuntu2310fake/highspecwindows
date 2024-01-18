@@ -1,4 +1,4 @@
-name: Windows / Linux KVM support high spec (12gb ram / 60gb ssd / 3core / VT-x support)
+name: Windows / Linux KVM support high spec (8gb ram / 60gb ssd / 3core / VT-x support)
 
 on: 
   workflow_dispatch:
@@ -18,7 +18,8 @@ jobs:
         run: |
           sudo apt update -y
           sudo apt install curl wget qemu-kvm -y
-          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
           tar -xf ngrok-v3-stable-linux-amd64.tgz
           chmod +x ngrok
           ./ngrok config add-authtoken "${{ github.event.inputs.ngrok }}"
@@ -27,7 +28,13 @@ jobs:
         run: |
           sudo chmod 666 /dev/kvm
           sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
-          wget -O file.iso "${{ github.event.inputs.link_iso }}"
-          wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso
-          echo "bình thường sẽ được 20 - 30 phút nhé còn ae nào may mắn đc 2-4h"
-          sudo qemu-system-x86_64 -M q35,usb=on -device usb-tablet -cpu host -smp 3 -m 12G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd
+          sudo qemu-img create -f raw a.img 20G
+          wget -O file.iso "${{ github.event.inputs.link_iso }}" &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
+          wget -O driver.iso https://computernewb.com/isos/driver/virtio-win-0.1.240.iso &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
+          wget https://github.com/kholia/OSX-KVM/raw/master/OVMF_VARS-1024x768.fd &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
+          sudo cpulimit -l 50 -- sudo kvm -M q35,usb=on -device usb-tablet -cpu host -smp 2 -m 8G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd -drive if=pflash,format=raw,file="$REPO_PATH/$OVMF_DIR/OVMF_VARS-1024x768.fd"
+          while ps axg | grep -vw grep | grep -w qemu-system-x86_64 > /dev/null; do sleep 1; done
+          while ps axg | grep -vw grep | grep -w kvm > /dev/null; do sleep 1; done
