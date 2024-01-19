@@ -1,4 +1,4 @@
-name: old os (dưới windows 7 - 64bit)
+name: old os (windows xp đến win 7 - 64bit, cài xong nhớ cài driver virtio-net vì e1000 ko hỗ trợ cho xp)
 
 on: 
   workflow_dispatch:
