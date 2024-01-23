@@ -2,10 +2,6 @@ name: test cpu ram
 
 on: 
   workflow_dispatch:
-    inputs:
-      ngrok:
-        description: 'ngrok auth token'
-        required: false
  
 jobs:
   build:
@@ -17,6 +13,8 @@ jobs:
           sudo apt install neofetch -y
           neofetch
           lscpu
-          free -m
+          free -h
           lsblk
           ls /mnt
+          df -h
+          systemctl
