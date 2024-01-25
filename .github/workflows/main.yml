@@ -12,7 +12,7 @@ on:
  
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted, ubuntu-22.04, asia-east1
     steps:
       - name: chuẩn bị phần mềm
         run: |
