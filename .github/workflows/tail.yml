@@ -1,0 +1,36 @@
+name: highspecwindows tailscale
+
+on: 
+  workflow_dispatch:
+    inputs:
+      link_iso:
+        description: 'dán link iso của ae vô đây'
+        required: true
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: chuẩn bị phần mềm
+        run: |
+          sudo apt update -y
+          sudo apt install curl wget qemu-kvm cpulimit -y
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+          tar -xf ngrok-v3-stable-linux-amd64.tgz
+          chmod +x ngrok
+          ./ngrok config add-authtoken "${{ github.event.inputs.ngrok }}"
+          nohup ./ngrok tcp --region ap 5900 &>/dev/null &
+      - name: cài win và khởi chạy
+        run: |
+          sudo chmod 666 /dev/kvm
+          sudo qemu-img create -f qcow2 /mnt/a.qcow2 60G
+          sudo qemu-img create -f raw a.img 20G
+          wget -O file.iso "${{ github.event.inputs.link_iso }}" &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
+          wget -O driver.iso https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.240-1/virtio-win-0.1.240.iso &>/dev/null &
+          while ps axg | grep -vw grep | grep -w wget > /dev/null; do sleep 1; done
+          echo "thanh cong"
+          curl --silent --show-error http://127.0.0.1:4040/api/tunnels | sed -nE 's/.*public_url":"tcp:..([^"]*).*/\1/p'
+          sudo cpulimit -l 60 -- sudo kvm -M q35,usb=on -device usb-tablet -cpu host -smp 2 -m 8G -device virtio-balloon-pci -vga qxl -net nic,netdev=n0 -netdev user,id=n0 -boot c -device virtio-serial-pci -device virtio-rng-pci -enable-kvm -drive file=/mnt/a.qcow2 -drive file=file.iso,media=cdrom -drive file=a.img,format=raw -drive file=driver.iso,media=cdrom  -vnc :0 -bios /usr/share/ovmf/OVMF.fd -uuid e47ddb84-fb4d-46f9-b531-14bb15156336
+          while ps axg | grep -vw grep | grep -w qemu-system-x86_64 > /dev/null; do sleep 1; done
+          while ps axg | grep -vw grep | grep -w kvm > /dev/null; do sleep 1; done
