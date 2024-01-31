@@ -14,6 +14,7 @@ jobs:
       - name: chuẩn bị phần mềm
         run: |
           sudo apt update -y
+          sudo apt install qemu-kvm cpulimit wget -y
           curl -fsSL https://tailscale.com/install.sh | sh
           sudo tailscale up
       - name: cài win và khởi chạy
