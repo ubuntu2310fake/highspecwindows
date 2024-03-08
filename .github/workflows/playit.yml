@@ -1,4 +1,4 @@
-name: highspecwindows playit
+name: highspecwindows playit (chưa hoàn thiện)
 
 on: 
   workflow_dispatch:
